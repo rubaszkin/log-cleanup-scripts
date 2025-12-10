@@ -1,0 +1,377 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║              SUMMARY REPORT FEATURE GUIDE                            ║
+║         Detailed Cleanup Statistics and Space Information           ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ WHAT IS THE SUMMARY REPORT?                                         │
+└──────────────────────────────────────────────────────────────────────┘
+
+After every cleanup operation, the script automatically creates a detailed
+summary report showing:
+
+✓ How much space was cleaned
+✓ Total size of deleted data (KB/MB/GB)
+✓ Number of files deleted
+✓ Before and after disk usage
+✓ Disk usage reduction percentage
+✓ Which directories were cleaned
+✓ Cleanup mode used
+✓ Final system status
+✓ Recommendations for next steps
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ REPORT LOCATION                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+Default location:
+  /var/log/log_cleanup_summary.txt
+
+To view the report:
+  cat /var/log/log_cleanup_summary.txt
+
+Or use less for pagination:
+  less /var/log/log_cleanup_summary.txt
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ SAMPLE REPORT                                                        │
+└──────────────────────────────────────────────────────────────────────┘
+
+╔══════════════════════════════════════════════════════════════════════╗
+║                    LOG CLEANUP SUMMARY REPORT                        ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+EXECUTION DETAILS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Timestamp:           2025-12-10 14:35:22
+Hostname:            webserver01
+Script:              clean_logs_debian.sh
+Cleanup Mode:        FORCE CLEANUP (Auto-activated)
+Dry Run:             false
+
+DISK USAGE STATISTICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total Disk Size:     500G
+Used Before:         480G (96%)
+Used After:          350G (70%)
+Usage Reduction:     26%
+
+CLEANUP RESULTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Files Deleted:       1,247
+Space Freed (KB):    136314880 KB
+Space Freed (MB):    133120 MB
+Space Freed (GB):    130 GB
+Human Readable:      130GB
+
+DIRECTORIES PROCESSED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total Checked:       42 locations
+Successfully Found:  28 locations
+
+THRESHOLDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Standard Threshold:  90%
+Critical Threshold:  95%
+Days Retained:       3 days
+
+LOG DIRECTORIES CLEANED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✓ /var/log (8.5G)
+  ✓ /var/log/apache2 (45G)
+  ✓ /var/log/nginx (12G)
+  ✓ /var/log/mysql (38G)
+  ✓ /var/log/postgresql (15G)
+  ✓ /var/lib/docker/containers (20G)
+
+FINAL STATUS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Status:              ✅ SUCCESS
+Final Usage:         70% (Below 90%)
+Recommendation:      System is healthy, continue regular maintenance
+
+╔══════════════════════════════════════════════════════════════════════╗
+║                         End of Report                                ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ REPORT CONTENTS EXPLAINED                                            │
+└──────────────────────────────────────────────────────────────────────┘
+
+SECTION 1: EXECUTION DETAILS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Timestamp:      When the cleanup ran
+Hostname:       Server name
+Script:         Which script was used
+Cleanup Mode:   Standard, Force (auto), or Force (manual)
+Dry Run:        Whether it was a test run
+
+
+SECTION 2: DISK USAGE STATISTICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total Disk Size:   Total capacity of root partition
+Used Before:       Disk usage before cleanup
+Used After:        Disk usage after cleanup
+Usage Reduction:   Percentage points reduced
+
+
+SECTION 3: CLEANUP RESULTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Files Deleted:     Total number of files removed
+Space Freed (KB):  Exact space freed in kilobytes
+Space Freed (MB):  Space freed in megabytes
+Space Freed (GB):  Space freed in gigabytes
+Human Readable:    Most appropriate unit
+
+
+SECTION 4: DIRECTORIES PROCESSED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total Checked:     How many directories the script looked for
+Successfully Found: How many actually existed and were cleaned
+
+
+SECTION 5: THRESHOLDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Standard Threshold:  When standard cleanup activates
+Critical Threshold:  When force mode auto-activates
+Days Retained:       Age of logs that were kept
+
+
+SECTION 6: LOG DIRECTORIES CLEANED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+List of all directories that were processed
+Shows current size of each directory
+
+
+SECTION 7: FINAL STATUS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Status:         Success, Warning, or Critical
+Final Usage:    Current disk usage
+Recommendation: What to do next
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ VIEWING THE REPORT                                                   │
+└──────────────────────────────────────────────────────────────────────┘
+
+VIEW FULL REPORT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+cat /var/log/log_cleanup_summary.txt
+
+
+VIEW WITH PAGINATION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+less /var/log/log_cleanup_summary.txt
+
+
+VIEW SPECIFIC SECTION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Just the cleanup results
+grep -A 6 "CLEANUP RESULTS" /var/log/log_cleanup_summary.txt
+
+# Just the space freed
+grep "Space Freed" /var/log/log_cleanup_summary.txt
+
+
+VIEW LAST CLEANUP STATISTICS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Quick summary
+grep -E "(Timestamp|Space Freed \(GB\)|Final Usage)" /var/log/log_cleanup_summary.txt
+
+Output:
+  Timestamp:           2025-12-10 14:35:22
+  Space Freed (GB):    130 GB
+  Final Usage:         70% (Below 90%)
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ TRACKING CLEANUP HISTORY                                             │
+└──────────────────────────────────────────────────────────────────────┘
+
+SAVE HISTORICAL REPORTS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The summary report is overwritten each time. To keep history:
+
+# Copy report with timestamp
+sudo cp /var/log/log_cleanup_summary.txt \
+        /var/log/log_cleanup_summary_$(date +%Y%m%d_%H%M%S).txt
+
+
+AUTOMATIC HISTORY (Add to script or cron):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# In cron job
+0 2 * * * /usr/local/bin/clean_logs_advanced.sh && \
+          cp /var/log/log_cleanup_summary.txt \
+             /var/log/archive/summary_$(date +\%Y\%m\%d).txt
+
+
+CREATE MONTHLY SUMMARIES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Concatenate all summaries from a month
+cat /var/log/archive/summary_202512*.txt > /var/log/monthly_202512.txt
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ USING REPORT DATA                                                    │
+└──────────────────────────────────────────────────────────────────────┘
+
+EXTRACT SPACE FREED:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SPACE_GB=$(grep "Space Freed (GB)" /var/log/log_cleanup_summary.txt | \
+           awk '{print $4}')
+echo "Last cleanup freed: $SPACE_GB GB"
+
+
+EXTRACT FILES DELETED:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FILES=$(grep "Files Deleted:" /var/log/log_cleanup_summary.txt | \
+        awk '{print $3}')
+echo "Files deleted: $FILES"
+
+
+CHECK IF CLEANUP WAS SUCCESSFUL:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+if grep -q "✅ SUCCESS" /var/log/log_cleanup_summary.txt; then
+    echo "Cleanup successful!"
+else
+    echo "Cleanup needs attention"
+fi
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ ALERTING BASED ON REPORT                                             │
+└──────────────────────────────────────────────────────────────────────┘
+
+EMAIL ALERT IF CRITICAL:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#!/bin/bash
+# check_cleanup.sh
+
+if grep -q "⚠️  CRITICAL" /var/log/log_cleanup_summary.txt; then
+    mail -s "CRITICAL: Cleanup failed on $(hostname)" admin@example.com \
+         < /var/log/log_cleanup_summary.txt
+fi
+
+
+SLACK NOTIFICATION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#!/bin/bash
+# slack_notify.sh
+
+SPACE=$(grep "Space Freed (GB)" /var/log/log_cleanup_summary.txt | awk '{print $4}')
+STATUS=$(grep "Status:" /var/log/log_cleanup_summary.txt | awk '{print $2}')
+
+curl -X POST -H 'Content-type: application/json' \
+     --data "{\"text\":\"Cleanup: ${SPACE}GB freed - ${STATUS}\"}" \
+     YOUR_SLACK_WEBHOOK_URL
+
+
+DASHBOARD INTEGRATION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Extract data for monitoring dashboard
+SPACE_GB=$(grep "Space Freed (GB)" /var/log/log_cleanup_summary.txt | awk '{print $4}')
+FILES=$(grep "Files Deleted:" /var/log/log_cleanup_summary.txt | awk '{print $3}')
+USAGE=$(grep "Final Usage:" /var/log/log_cleanup_summary.txt | awk '{print $3}')
+
+# Send to monitoring system (example: InfluxDB)
+curl -i -XPOST 'http://localhost:8086/write?db=metrics' \
+     --data-binary "cleanup,host=$(hostname) space_freed=${SPACE_GB},files=${FILES},usage=${USAGE}"
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ REPORT CUSTOMIZATION                                                 │
+└──────────────────────────────────────────────────────────────────────┘
+
+CHANGE REPORT LOCATION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Edit the script and change:
+
+SUMMARY_REPORT="/var/log/log_cleanup_summary.txt"
+
+To:
+
+SUMMARY_REPORT="/custom/path/cleanup_summary.txt"
+
+
+MULTIPLE REPORTS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# One for each server
+SUMMARY_REPORT="/var/log/cleanup_$(hostname).txt"
+
+# One per date
+SUMMARY_REPORT="/var/log/cleanup_$(date +%Y%m%d).txt"
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ EXAMPLE WORKFLOWS                                                    │
+└──────────────────────────────────────────────────────────────────────┘
+
+WORKFLOW 1: Daily Cleanup with Email Report
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#!/bin/bash
+# daily_cleanup.sh
+
+# Run cleanup
+/usr/local/bin/clean_logs_advanced.sh
+
+# Email the summary
+mail -s "Daily Cleanup Report - $(hostname)" admin@example.com \
+     < /var/log/log_cleanup_summary.txt
+
+
+WORKFLOW 2: Cleanup and Archive Report
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#!/bin/bash
+# cleanup_with_archive.sh
+
+# Run cleanup
+/usr/local/bin/clean_logs_debian.sh --force
+
+# Archive the report
+mkdir -p /var/log/cleanup_archive
+cp /var/log/log_cleanup_summary.txt \
+   /var/log/cleanup_archive/summary_$(date +%Y%m%d_%H%M%S).txt
+
+# Keep only last 30 days of archives
+find /var/log/cleanup_archive -name "summary_*.txt" -mtime +30 -delete
+
+
+WORKFLOW 3: Conditional Cleanup
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#!/bin/bash
+# smart_cleanup.sh
+
+# Run cleanup
+/usr/local/bin/clean_logs_advanced.sh
+
+# Check if critical
+if grep -q "⚠️  CRITICAL" /var/log/log_cleanup_summary.txt; then
+    echo "Critical situation detected, running force cleanup..."
+    /usr/local/bin/clean_logs_advanced.sh --force
+    
+    # Alert team
+    mail -s "CRITICAL: Force cleanup executed" team@example.com \
+         < /var/log/log_cleanup_summary.txt
+fi
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ TROUBLESHOOTING                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+REPORT NOT CREATED:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Check:
+  1. Script ran successfully
+  2. Permission to write to /var/log
+  3. Disk not completely full
+  4. Check detailed log: tail -f /var/log/log_cleanup.log
+
+
+REPORT IS EMPTY:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Cause: Script didn't complete successfully
+Fix: Check /var/log/log_cleanup.log for errors
+
+
+CAN'T READ REPORT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+sudo cat /var/log/log_cleanup_summary.txt
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  📊 Every cleanup now generates a detailed summary report!          ║
+║     Location: /var/log/log_cleanup_summary.txt                      ║
+╚══════════════════════════════════════════════════════════════════════╝

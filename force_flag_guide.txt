@@ -1,0 +1,381 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║              --force FLAG BEHAVIOR GUIDE                             ║
+║           Bypass Disk Usage Checks for Manual Cleanup               ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ WHAT CHANGED?                                                        │
+└──────────────────────────────────────────────────────────────────────┘
+
+BEFORE (Old Behavior):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - Script only ran if disk usage >= threshold (90%)
+  - --force flag activated aggressive cleanup
+  - But still required 90%+ disk usage to run at all
+  - Couldn't do preventive cleanup below threshold
+
+NOW (New Behavior):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✓ Script with --force BYPASSES disk usage check
+  ✓ Runs aggressive cleanup at ANY disk usage level
+  ✓ Perfect for preventive maintenance
+  ✓ Useful before large operations
+  ✓ Manual control when needed
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ THREE MODES OF OPERATION                                             │
+└──────────────────────────────────────────────────────────────────────┘
+
+MODE 1: NORMAL CLEANUP (No flags)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Command:
+  sudo ./clean_logs_advanced.sh
+
+Behavior:
+  - Checks disk usage
+  - Exits if < 90%
+  - Runs standard cleanup if 90-94%
+  - Auto-activates force mode if >= 95%
+
+Example:
+  Disk: 75% → "No cleanup needed" → Exit
+  Disk: 92% → Standard cleanup → Compress + delete old logs
+  Disk: 97% → Force mode (automatic) → Aggressive cleanup
+
+
+MODE 2: FORCE MODE - AUTOMATIC (Critical disk usage)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Command:
+  sudo ./clean_logs_advanced.sh
+
+Trigger:
+  - Disk usage >= 95%
+
+Behavior:
+  - Automatically activates force mode
+  - Aggressive cleanup
+  - Deletes ALL rotated logs
+  - Truncates large files
+  - Cleans caches
+
+Example:
+  Disk: 97% → Force mode activated automatically
+
+
+MODE 3: FORCE MODE - MANUAL OVERRIDE (NEW!)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Command:
+  sudo ./clean_logs_advanced.sh --force
+
+Behavior:
+  - BYPASSES disk usage check
+  - Runs force cleanup regardless of disk usage
+  - Works at 50%, 70%, 90%, ANY percentage
+  - Perfect for preventive maintenance
+
+Example:
+  Disk: 50% → Force cleanup runs anyway
+  Disk: 75% → Force cleanup runs anyway
+  Disk: 85% → Force cleanup runs anyway
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ USE CASES FOR --force FLAG                                           │
+└──────────────────────────────────────────────────────────────────────┘
+
+USE CASE 1: Preventive Maintenance
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Scenario: You want to clean logs before they become a problem
+
+Current disk: 75%
+Action:
+  sudo ./clean_logs_advanced.sh --force
+
+Result:
+  - Aggressive cleanup runs
+  - Disk drops to 60%
+  - Prevents future issues
+
+
+USE CASE 2: Before Large Operations
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Scenario: About to import large database or deploy application
+
+Current disk: 80%
+Action:
+  sudo ./clean_logs_advanced.sh --force
+
+Result:
+  - Frees maximum space
+  - Creates room for operation
+  - Avoids disk full errors
+
+
+USE CASE 3: Scheduled Deep Cleaning
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Scenario: Monthly deep cleanup regardless of disk usage
+
+Cron job:
+  0 3 1 * * /usr/local/bin/clean_logs_advanced.sh --force
+
+Result:
+  - Runs first day of each month
+  - Aggressive cleanup
+  - Keeps system lean
+
+
+USE CASE 4: Testing Cleanup Effectiveness
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Scenario: Want to see how much space could be freed
+
+Current disk: 70%
+Action:
+  sudo ./clean_logs_advanced.sh --force --dry-run
+
+Result:
+  - Shows what would be deleted
+  - No actual deletion
+  - See potential recovery
+
+
+USE CASE 5: After Application Issues
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Scenario: Application crashed and generated huge logs
+
+Current disk: 88% (not yet at 90% threshold)
+Action:
+  sudo ./clean_logs_advanced.sh --force
+
+Result:
+  - Immediate aggressive cleanup
+  - Don't wait for 90%
+  - Quick recovery
+
+
+USE CASE 6: Lower Threshold Preference
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Scenario: Your policy is to clean aggressively at 85%
+
+Current disk: 86%
+Action:
+  sudo ./clean_logs_advanced.sh --force
+
+Result:
+  - Force cleanup at your threshold
+  - No need to wait for 90%
+  - Customized policy
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ COMMAND EXAMPLES                                                     │
+└──────────────────────────────────────────────────────────────────────┘
+
+STANDARD USAGE (automatic disk check):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Run with disk usage check
+sudo ./clean_logs_advanced.sh
+
+Output if disk < 90%:
+  "Disk usage (75%) is below threshold (90%)"
+  "No cleanup needed"
+  [Exit]
+
+Output if disk >= 90%:
+  "Disk usage (92%) exceeds threshold (90%)"
+  "Starting cleanup..."
+  [Cleanup runs]
+
+
+FORCE MODE (bypass disk check):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Run force mode regardless of disk usage
+sudo ./clean_logs_advanced.sh --force
+
+Output:
+  "Force mode activated manually - bypassing disk usage check"
+  "Running aggressive cleanup regardless of disk usage"
+  [Force cleanup runs at ANY disk level]
+
+
+DRY-RUN WITH FORCE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# See what force mode would do (no deletion)
+sudo ./clean_logs_advanced.sh --force --dry-run
+
+Output:
+  "DRY RUN MODE - No files will be deleted"
+  "Force mode activated manually - bypassing disk usage check"
+  [DRY RUN] Would delete: /var/log/syslog.1 (15MB)
+  [DRY RUN] Would delete: /var/log/apache2/access.log.2.gz (50MB)
+  ...
+
+
+FORCE WITH CUSTOM RETENTION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Force cleanup keeping only 2 days of logs
+sudo ./clean_logs_advanced.sh --force --days 2
+
+Output:
+  "Force mode activated manually - bypassing disk usage check"
+  "Cleaning logs older than 2 days"
+  [Very aggressive cleanup]
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ COMPARISON: With and Without --force                                 │
+└──────────────────────────────────────────────────────────────────────┘
+
+SCENARIO: Disk at 75%
+
+WITHOUT --force:
+  $ sudo ./clean_logs_advanced.sh
+  
+  Initial disk usage: 75%
+  Disk usage (75%) is below threshold (90%)
+  No cleanup needed
+  
+  [Script exits, nothing cleaned]
+
+
+WITH --force:
+  $ sudo ./clean_logs_advanced.sh --force
+  
+  Initial disk usage: 75%
+  Force mode activated manually - bypassing disk usage check
+  Running aggressive cleanup regardless of disk usage
+  
+  --- FORCE MODE: Emergency Cleanup ---
+  Cleaning APT cache...
+  Deleting: /var/log/syslog.1 (15MB)
+  Deleting: /var/log/syslog.2.gz (12MB)
+  Force deleting: /var/log/apache2/access.log.1 (50MB)
+  Truncating: /var/log/mysql/mysql.log (200MB → 2MB)
+  ...
+  
+  Cleanup Summary:
+    Files deleted: 456
+    Space freed: 8GB
+    Initial usage: 75%
+    Final usage: 65%
+    Reduction: 10%
+  
+  SUCCESS: Disk usage reduced to 65%
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ AUTOMATION EXAMPLES                                                  │
+└──────────────────────────────────────────────────────────────────────┘
+
+EXAMPLE 1: Dual Strategy
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Daily: Auto cleanup if disk >= 90%
+0 2 * * * /usr/local/bin/clean_logs_advanced.sh >> /var/log/cleanup.log 2>&1
+
+# Weekly: Force cleanup regardless of usage (Sunday 3 AM)
+0 3 * * 0 /usr/local/bin/clean_logs_advanced.sh --force >> /var/log/cleanup.log 2>&1
+
+
+EXAMPLE 2: Monthly Deep Clean
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# First day of every month at 3 AM
+0 3 1 * * /usr/local/bin/clean_logs_advanced.sh --force >> /var/log/cleanup.log 2>&1
+
+
+EXAMPLE 3: Pre-Backup Cleanup
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#!/bin/bash
+# cleanup_and_backup.sh
+
+# Force cleanup before backup
+/usr/local/bin/clean_logs_advanced.sh --force
+
+# Then run backup
+/usr/local/bin/backup_script.sh
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ SAFETY FEATURES                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+Even with --force flag, the script maintains safety:
+
+✓ Dry-run mode available
+  sudo ./clean_logs_advanced.sh --force --dry-run
+
+✓ Detailed logging
+  All actions logged to /var/log/log_cleanup.log
+
+✓ Permission checks
+  Only deletes files with write access
+
+✓ Age verification
+  Still respects --days parameter
+
+✓ File preservation
+  Truncates large files, keeps recent data
+
+✓ No accidental deletion
+  Only targets log patterns (*.log, *.gz, etc.)
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ TROUBLESHOOTING                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+PROBLEM: Script still won't run
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Check:
+  - Running with sudo?
+  - Script is executable? (chmod +x)
+  - Using latest version?
+
+
+PROBLEM: Not freeing enough space
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Try:
+  - More aggressive retention: --days 2
+  - Check what's using space: du -sh /var/log/*
+  - Use Debian version for more coverage
+
+
+PROBLEM: Want to see what would be deleted first
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Solution:
+  sudo ./clean_logs_advanced.sh --force --dry-run
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ BEST PRACTICES                                                       │
+└──────────────────────────────────────────────────────────────────────┘
+
+✓ DO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Use --force for preventive maintenance
+✓ Test with --dry-run first
+✓ Schedule monthly --force cleanup
+✓ Use before major operations
+✓ Document why you're using --force
+
+✗ DON'T:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✗ Run --force multiple times per day (unnecessary)
+✗ Skip --dry-run on first use
+✗ Use --days 1 (too aggressive, may lose needed logs)
+✗ Run during peak hours (I/O intensive)
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ QUICK REFERENCE                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+# Check disk, cleanup if needed (automatic)
+sudo ./clean_logs_advanced.sh
+
+# Force cleanup at ANY disk level
+sudo ./clean_logs_advanced.sh --force
+
+# Test force cleanup (no deletion)
+sudo ./clean_logs_advanced.sh --force --dry-run
+
+# Force with custom retention
+sudo ./clean_logs_advanced.sh --force --days 3
+
+# Check help
+sudo ./clean_logs_advanced.sh --help
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  💡 KEY POINT: --force now bypasses disk usage check entirely!      ║
+║     Use it for preventive maintenance or manual control.            ║
+╚══════════════════════════════════════════════════════════════════════╝

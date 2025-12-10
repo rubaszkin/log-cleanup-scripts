@@ -18,9 +18,11 @@ CRITICAL_DAYS_TO_KEEP=3  # More aggressive cleanup for critical mode
 DRY_RUN=false
 ENABLE_COMPRESSION=true
 SCRIPT_LOG="/var/log/log_cleanup.log"
+SUMMARY_REPORT="/var/log/log_cleanup_summary.txt"  # Summary report file
 EMAIL_NOTIFY=false
 EMAIL_ADDRESS="admin@example.com"
 FORCE_MODE=false  # Automatically set when critical threshold is reached
+FORCE_FLAG_USED=false  # Track if --force was manually specified
 
 # Colors for output
 RED='\033[0;31m'
@@ -256,6 +258,135 @@ emergency_cleanup() {
     clean_journal_logs 1
 }
 
+# Function to create detailed summary report
+create_summary_report() {
+    local initial_usage=$1
+    local final_usage=$2
+    local files_deleted=$3
+    local space_freed_kb=$4
+    
+    local space_freed_mb=$((space_freed_kb / 1024))
+    local space_freed_gb=$((space_freed_kb / 1048576))
+    local reduction=$((initial_usage - final_usage))
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    local hostname=$(hostname)
+    
+    # Get disk information
+    local disk_info=$(df -h / | awk 'NR==2 {print $2, $3, $4}')
+    local total_size=$(echo $disk_info | awk '{print $1}')
+    local used_size=$(echo $disk_info | awk '{print $2}')
+    local available_size=$(echo $disk_info | awk '{print $3}')
+    
+    # Determine cleanup mode
+    local cleanup_mode="Standard Cleanup"
+    if [ "$FORCE_MODE" = true ]; then
+        if [ "$FORCE_FLAG_USED" = true ]; then
+            cleanup_mode="FORCE CLEANUP (Manual Override)"
+        else
+            cleanup_mode="FORCE CLEANUP (Auto-activated)"
+        fi
+    fi
+    
+    # Create summary report
+    cat > "$SUMMARY_REPORT" << EOF
+╔══════════════════════════════════════════════════════════════════════╗
+║                    LOG CLEANUP SUMMARY REPORT                        ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+EXECUTION DETAILS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Timestamp:           $timestamp
+Hostname:            $hostname
+Script:              $(basename $0)
+Cleanup Mode:        $cleanup_mode
+Dry Run:             $DRY_RUN
+
+DISK USAGE STATISTICS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total Disk Size:     $total_size
+Used Before:         $used_size (${initial_usage}%)
+Used After:          $available_size (${final_usage}%)
+Usage Reduction:     ${reduction}%
+
+CLEANUP RESULTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Files Deleted:       $files_deleted
+Space Freed (KB):    ${space_freed_kb} KB
+Space Freed (MB):    ${space_freed_mb} MB
+Space Freed (GB):    ${space_freed_gb} GB
+Human Readable:      $(human_readable_size $space_freed_kb)
+
+THRESHOLDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Standard Threshold:  ${THRESHOLD}%
+Critical Threshold:  ${CRITICAL_THRESHOLD}%
+Days Retained:       $([ "$FORCE_MODE" = true ] && echo "$CRITICAL_DAYS_TO_KEEP" || echo "$DAYS_TO_KEEP") days
+
+LOG DIRECTORIES CLEANED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EOF
+
+    # Add directories that were cleaned
+    for dir in "${LOG_DIRS[@]}"; do
+        if [ -d "$dir" ]; then
+            echo "  ✓ $dir" >> "$SUMMARY_REPORT"
+        fi
+    done
+    
+    # Add final status
+    cat >> "$SUMMARY_REPORT" << EOF
+
+FINAL STATUS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EOF
+
+    if [ "$final_usage" -ge "$CRITICAL_THRESHOLD" ]; then
+        cat >> "$SUMMARY_REPORT" << EOF
+Status:              ⚠️  CRITICAL - Manual intervention needed
+Final Usage:         ${final_usage}% (Still above ${CRITICAL_THRESHOLD}%)
+Recommendation:      Check for large files, consider disk expansion
+
+Actions to take:
+  1. Find largest files: du -sh /var/* | sort -rh | head -20
+  2. Check large directories: ncdu / (if available)
+  3. Review application logs
+  4. Consider expanding disk space
+EOF
+    elif [ "$final_usage" -ge "$THRESHOLD" ]; then
+        cat >> "$SUMMARY_REPORT" << EOF
+Status:              ⚠️  WARNING - Still above threshold
+Final Usage:         ${final_usage}% (Above ${THRESHOLD}%)
+Recommendation:      Monitor closely, consider more aggressive cleanup
+EOF
+    else
+        cat >> "$SUMMARY_REPORT" << EOF
+Status:              ✅ SUCCESS
+Final Usage:         ${final_usage}% (Below ${THRESHOLD}%)
+Recommendation:      System is healthy, continue regular maintenance
+EOF
+    fi
+    
+    # Add footer
+    cat >> "$SUMMARY_REPORT" << EOF
+
+REPORT LOCATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+This report:         $SUMMARY_REPORT
+Detailed log:        $SCRIPT_LOG
+
+╔══════════════════════════════════════════════════════════════════════╗
+║                         End of Report                                ║
+╚══════════════════════════════════════════════════════════════════════╝
+EOF
+    
+    log_color "$GREEN" "Summary report created: $SUMMARY_REPORT"
+    
+    # Display report location
+    echo ""
+    echo "📊 Detailed summary report saved to: $SUMMARY_REPORT"
+    echo "📝 View report: cat $SUMMARY_REPORT"
+}
+
 # Main function
 main() {
     log_message "=========================================="
@@ -272,8 +403,13 @@ main() {
     initial_usage=$(get_disk_usage /)
     log_message "Initial disk usage: ${initial_usage}%"
     
-    # Check if critical cleanup is needed
-    if [ "$initial_usage" -ge "$CRITICAL_THRESHOLD" ]; then
+    # If --force flag was used manually, skip disk usage check
+    if [ "$FORCE_FLAG_USED" = true ]; then
+        log_color "$YELLOW" "Force mode activated manually - bypassing disk usage check"
+        log_message "Running aggressive cleanup regardless of disk usage"
+        FORCE_MODE=true
+    # Check if critical cleanup is needed based on disk usage
+    elif [ "$initial_usage" -ge "$CRITICAL_THRESHOLD" ]; then
         log_color "$RED" "!!! CRITICAL DISK USAGE: ${initial_usage}% !!!"
         log_color "$RED" "Activating FORCE CLEANUP mode"
         FORCE_MODE=true
@@ -387,6 +523,9 @@ main() {
     log_message "  Reduction: $((initial_usage - final_usage))%"
     log_message "=========================================="
     
+    # Create detailed summary report
+    create_summary_report "$initial_usage" "$final_usage" "$total_files_deleted" "$total_space_freed"
+    
     if [ "$final_usage" -ge "$CRITICAL_THRESHOLD" ]; then
         log_color "$RED" "!!! CRITICAL WARNING: Disk usage STILL at ${final_usage}% !!!"
         log_message "URGENT: Manual intervention required!"
@@ -418,7 +557,8 @@ while [[ $# -gt 0 ]]; do
             ;;
         --force)
             FORCE_MODE=true
-            log_message "FORCE MODE - Aggressive cleanup enabled"
+            FORCE_FLAG_USED=true
+            log_message "FORCE MODE - Aggressive cleanup enabled (manual override)"
             shift
             ;;
         --days)
@@ -438,11 +578,16 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --dry-run                Show what would be deleted without deleting"
-            echo "  --force                  Enable force cleanup mode (aggressive)"
+            echo "  --force                  Enable force cleanup mode (ignores disk usage)"
             echo "  --days N                 Keep logs newer than N days (default: 7)"
             echo "  --threshold N            Disk usage threshold percentage (default: 90)"
-            echo "  --critical-threshold N   Critical threshold for force mode (default: 95)"
+            echo "  --critical-threshold N   Critical threshold for auto-force mode (default: 95)"
             echo "  --help                   Show this help message"
+            echo ""
+            echo "Behavior:"
+            echo "  - Normal: Runs cleanup only if disk usage >= threshold"
+            echo "  - With --force: Runs aggressive cleanup regardless of disk usage"
+            echo "  - Auto-force: Activates at critical threshold (95%+)"
             echo ""
             echo "Force Mode (activated at ${CRITICAL_THRESHOLD}% or with --force):"
             echo "  - Deletes ALL rotated and compressed logs"
