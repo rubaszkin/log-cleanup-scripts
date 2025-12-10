@@ -1,0 +1,378 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║     FEDORA/CENTOS/RHEL LOG CLEANUP - COMPLETE GUIDE                 ║
+║              Red Hat-Based Systems Specifics                         ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ KEY DIFFERENCES: RHEL vs DEBIAN                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+PACKAGE MANAGERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Debian/Ubuntu:           RHEL/Fedora/CentOS:
+  apt-get                  yum (CentOS/RHEL 7)
+  dpkg                     dnf (Fedora/RHEL 8+)
+  /var/cache/apt           rpm
+                           /var/cache/yum
+                           /var/cache/dnf
+
+WEB SERVERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Debian/Ubuntu:           RHEL/Fedora/CentOS:
+  /var/log/apache2         /var/log/httpd
+  apache2                  httpd
+
+DATABASES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Debian/Ubuntu:           RHEL/Fedora/CentOS:
+  /var/log/mysql           /var/log/mariadb (preferred)
+  /var/log/postgresql      /var/log/mysql (alternative)
+                           /var/log/pgsql
+
+MAIL LOGS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Debian/Ubuntu:           RHEL/Fedora/CentOS:
+  /var/log/mail.log        /var/log/maillog
+  /var/log/mail.err        /var/log/mail (directory)
+
+FIREWALL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Debian/Ubuntu:           RHEL/Fedora/CentOS:
+  ufw                      firewalld
+  /var/log/ufw.log         /var/log/firewalld
+
+SECURITY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Debian/Ubuntu:           RHEL/Fedora/CentOS:
+  AppArmor                 SELinux
+  /var/log/apparmor        /var/log/audit
+                           /var/log/selinux
+                           /var/log/setroubleshoot
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ RHEL/FEDORA LOG LOCATIONS                                            │
+└──────────────────────────────────────────────────────────────────────┘
+
+SYSTEM LOGS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/var/log/messages           Main system log
+/var/log/secure             Security/authentication log
+/var/log/cron               Cron job logs
+/var/log/dmesg              Boot messages
+/var/log/boot.log           Boot process
+/var/log/lastlog            Last login records
+/var/log/wtmp               Login history
+/var/log/btmp               Failed logins
+
+PACKAGE MANAGEMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/var/log/yum.log            YUM operations (CentOS/RHEL 7)
+/var/log/dnf.log            DNF operations (Fedora/RHEL 8+)
+/var/log/dnf.rpm.log        RPM operations via DNF
+/var/log/dnf.librepo.log    Repository operations
+/var/cache/yum/             YUM cache directory
+/var/cache/dnf/             DNF cache directory
+
+WEB SERVERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/var/log/httpd/             Apache logs
+  ├── access_log            HTTP requests
+  ├── error_log             Error messages
+  └── ssl_access_log        SSL requests
+
+/var/log/nginx/             Nginx logs
+  ├── access.log            HTTP requests
+  └── error.log             Errors
+
+DATABASES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/var/log/mariadb/           MariaDB logs
+  └── mariadb.log           Main log
+
+/var/log/mysql/             MySQL logs
+  └── mysqld.log            MySQL daemon
+
+/var/log/pgsql/             PostgreSQL logs
+  └── postgresql-*.log      Server logs
+
+/var/log/mongodb/           MongoDB logs
+  └── mongod.log            MongoDB server
+
+/var/log/redis/             Redis logs
+  └── redis.log             Redis server
+
+MAIL SERVERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/var/log/maillog            Main mail log
+/var/log/mail/              Mail directory
+/var/log/postfix/           Postfix logs
+/var/log/dovecot/           Dovecot IMAP/POP3
+
+SECURITY & AUDIT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/var/log/audit/             Audit subsystem
+  └── audit.log             Main audit log (can be HUGE!)
+
+/var/log/firewalld          Firewall daemon
+/var/log/selinux/           SELinux logs
+/var/log/setroubleshoot/    SELinux troubleshooting
+
+APPLICATION SERVERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+/var/log/tomcat/            Tomcat logs
+/var/log/jboss/             JBoss application server
+/var/log/wildfly/           WildFly logs
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ RHEL-SPECIFIC CLEANUP OPERATIONS                                     │
+└──────────────────────────────────────────────────────────────────────┘
+
+YUM CACHE CLEANUP (CentOS/RHEL 7)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Clean all YUM cache
+yum clean all
+
+# Clean only packages
+yum clean packages
+
+# Clean only metadata
+yum clean metadata
+
+# Remove old kernels (keep 2)
+package-cleanup --oldkernels --count=2 -y
+
+DNF CACHE CLEANUP (Fedora/RHEL 8+)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Clean all DNF cache
+dnf clean all
+
+# Clean only packages
+dnf clean packages
+
+# Clean only metadata
+dnf clean metadata
+
+# Remove old kernels (keep 2)
+dnf remove --oldinstallonly --setopt installonly_limit=2 -y
+
+AUDIT LOG MANAGEMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Rotate audit logs manually
+service auditd rotate
+
+# Or with systemd
+systemctl kill -s SIGUSR1 auditd.service
+
+# Clean old audit logs
+find /var/log/audit -name "audit.log.*" -mtime +30 -delete
+
+SELINUX LOGS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Check SELinux log size
+du -sh /var/log/audit
+
+# Clear setroubleshoot database
+rm -rf /var/lib/setroubleshoot/*
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ USING THE RHEL CLEANUP SCRIPT                                        │
+└──────────────────────────────────────────────────────────────────────┘
+
+INSTALLATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Copy to system location
+sudo cp clean_logs_rhel.sh /usr/local/bin/
+sudo chmod +x /usr/local/bin/clean_logs_rhel.sh
+
+BASIC USAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Test mode (see what would be deleted)
+sudo ./clean_logs_rhel.sh --dry-run
+
+# Standard cleanup (if disk >= 90%)
+sudo ./clean_logs_rhel.sh
+
+# Force cleanup (regardless of disk usage)
+sudo ./clean_logs_rhel.sh --force
+
+# Custom retention
+sudo ./clean_logs_rhel.sh --days 14
+
+AUTOMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Edit root crontab
+sudo crontab -e
+
+# Add automated cleanup (every 6 hours)
+0 */6 * * * /usr/local/bin/clean_logs_rhel.sh >> /var/log/cleanup.log 2>&1
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ WHAT THE RHEL SCRIPT CLEANS                                          │
+└──────────────────────────────────────────────────────────────────────┘
+
+STANDARD MODE (90-94% disk usage):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Compresses logs older than 1 day
+✓ Deletes logs older than 7 days
+✓ Cleans systemd journal (keeps 7 days)
+✓ All log directories checked
+
+FORCE MODE (95%+ or --force flag):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Deletes ALL rotated logs (*.log.1, *.gz, *.old)
+✓ Keeps only 3 days of logs
+✓ Truncates large files (>100MB)
+✓ Cleans YUM cache (yum clean all)
+✓ Cleans DNF cache (dnf clean all)
+✓ Removes old kernels (keeps current + 1)
+✓ Cleans PackageKit cache
+✓ Removes thumbnail caches
+✓ Cleans Docker logs (truncate)
+✓ Removes core dumps
+✓ Cleans old audit logs (>30 days)
+✓ Rotates large audit.log (>1GB)
+✓ Cleans temporary files
+✓ Aggressive journal cleanup (1 day)
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ RHEL-SPECIFIC FEATURES                                               │
+└──────────────────────────────────────────────────────────────────────┘
+
+AUTOMATIC OS DETECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Script automatically detects:
+  - Fedora
+  - CentOS
+  - RHEL (Red Hat Enterprise Linux)
+  - Rocky Linux
+  - AlmaLinux
+
+Shows in summary report:
+  Operating System: CentOS Linux release 7.9.2009 (Core)
+
+PACKAGE MANAGER AUTO-DETECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Automatically uses the correct package manager:
+  - YUM for CentOS/RHEL 7
+  - DNF for Fedora/RHEL 8+
+  - Both if available
+
+AUDIT LOG HANDLING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Special handling for audit logs:
+  - Checks size before rotation
+  - Rotates if >1GB
+  - Deletes rotated logs >30 days
+  - Uses proper auditd rotation
+
+SELINUX AWARENESS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Works correctly with SELinux enabled
+Cleans SELinux troubleshooting logs
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ COMPARISON: DEBIAN vs RHEL SCRIPT                                    │
+└──────────────────────────────────────────────────────────────────────┘
+
+┌────────────────────────┬──────────────────┬──────────────────────┐
+│ Feature                │ Debian Script    │ RHEL Script          │
+├────────────────────────┼──────────────────┼──────────────────────┤
+│ Log Directories        │ 42 locations     │ 45 locations         │
+│ Package Manager        │ APT              │ YUM/DNF              │
+│ Cache Cleanup          │ apt-get clean    │ yum/dnf clean all    │
+│ Old Kernels            │ apt autoremove   │ dnf --oldinstallonly │
+│ Web Server Logs        │ apache2/nginx    │ httpd/nginx          │
+│ Database Logs          │ mysql/postgresql │ mariadb/pgsql        │
+│ Firewall Logs          │ ufw              │ firewalld            │
+│ Security Logs          │ AppArmor         │ SELinux/audit        │
+│ Special Handling       │ Docker           │ Docker + Audit       │
+│ OS Detection           │ No               │ Yes (Fedora/CentOS)  │
+│ Summary Report         │ Yes              │ Yes                  │
+│ Force Mode             │ Yes              │ Yes                  │
+└────────────────────────┴──────────────────┴──────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ TROUBLESHOOTING RHEL-SPECIFIC ISSUES                                 │
+└──────────────────────────────────────────────────────────────────────┘
+
+ISSUE: Audit.log very large (10GB+)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CAUSE: Audit logging too verbose
+FIX:
+  1. Rotate manually:
+     service auditd rotate
+  
+  2. Reduce audit rules:
+     auditctl -l  # List current rules
+     vim /etc/audit/audit.rules
+  
+  3. Configure max log size:
+     vim /etc/audit/auditd.conf
+     max_log_file = 100  # MB
+
+ISSUE: YUM/DNF cache very large
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHECK SIZE:
+  du -sh /var/cache/yum
+  du -sh /var/cache/dnf
+
+FIX:
+  yum clean all
+  dnf clean all
+
+ISSUE: Too many old kernels
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHECK:
+  rpm -qa | grep kernel
+
+FIX (DNF):
+  dnf remove --oldinstallonly --setopt installonly_limit=2 -y
+
+FIX (YUM):
+  package-cleanup --oldkernels --count=2 -y
+
+ISSUE: SELinux logs consuming space
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHECK:
+  du -sh /var/log/audit
+  du -sh /var/log/setroubleshoot
+
+FIX:
+  # Clean setroubleshoot
+  rm -rf /var/lib/setroubleshoot/*
+  
+  # Run script with --force
+  sudo ./clean_logs_rhel.sh --force
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ BEST PRACTICES FOR RHEL SYSTEMS                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+1. REGULAR CLEANUP
+   Run script weekly with --force
+   0 3 * * 0 /usr/local/bin/clean_logs_rhel.sh --force
+
+2. MONITOR AUDIT LOGS
+   Audit logs can grow extremely fast
+   Check size regularly: du -sh /var/log/audit
+
+3. KERNEL MANAGEMENT
+   Don't let old kernels accumulate
+   Keep only current + 1 previous
+
+4. CACHE MANAGEMENT
+   Clean YUM/DNF cache monthly
+   Especially after major updates
+
+5. JOURNAL CONFIGURATION
+   Set SystemMaxUse in /etc/systemd/journald.conf
+   SystemMaxUse=500M
+
+6. LOGROTATE CONFIGURATION
+   Review /etc/logrotate.d/ settings
+   Ensure aggressive rotation for busy servers
+
+╔══════════════════════════════════════════════════════════════════════╗
+║  🎯 The RHEL script is optimized for Red Hat-based systems!         ║
+║     Use it on: Fedora, CentOS, RHEL, Rocky Linux, AlmaLinux        ║
+╚══════════════════════════════════════════════════════════════════════╝
