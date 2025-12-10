@@ -1,0 +1,216 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║                 LOG CLEANUP SCRIPTS - FILE INDEX                     ║
+║                     Complete Package v2.0                            ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+📦 PACKAGE CONTENTS (7 files)
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ EXECUTABLE SCRIPTS (2)                                               │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│ 📄 clean_logs.sh                                     [4.6 KB]       │
+│    Basic log cleanup script                                         │
+│    ├─ Disk usage monitoring                                         │
+│    ├─ Log compression (>1 day)                                      │
+│    ├─ Log deletion (>7 days)                                        │
+│    └─ Dry-run mode                                                  │
+│                                                                      │
+│ 📄 clean_logs_advanced.sh                            [18 KB] ⭐      │
+│    Advanced script with Force Mode                                  │
+│    ├─ All basic features                                            │
+│    ├─ Command-line arguments                                        │
+│    ├─ Multiple directories                                          │
+│    ├─ Email notifications                                           │
+│    ├─ Color-coded output                                            │
+│    └─ 🔥 FORCE MODE (95-100% disk usage)                           │
+│       ├─ Aggressive cleanup                                         │
+│       ├─ Delete ALL rotated logs                                    │
+│       ├─ Truncate large files                                       │
+│       ├─ Clean caches & temp files                                  │
+│       └─ Expected: 15-40% space recovery                            │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────┐
+│ DOCUMENTATION (5)                                                    │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│ 📘 README.md                                         [7.4 KB]       │
+│    ⭐ START HERE - Main documentation                               │
+│    ├─ Installation guide                                            │
+│    ├─ Usage examples                                                │
+│    ├─ Configuration options                                         │
+│    ├─ Cron automation                                               │
+│    └─ Troubleshooting                                               │
+│                                                                      │
+│ 📕 FORCE_MODE.md                                     [7.7 KB]       │
+│    Detailed Force Mode documentation                                │
+│    ├─ When Force Mode activates                                     │
+│    ├─ What it does (aggressive cleanup)                             │
+│    ├─ Configuration & thresholds                                    │
+│    ├─ Usage examples                                                │
+│    ├─ Expected recovery rates                                       │
+│    ├─ Real-world scenarios                                          │
+│    └─ Advanced troubleshooting                                      │
+│                                                                      │
+│ 📗 QUICK_REFERENCE.txt                               [16 KB]        │
+│    ⚡ Emergency quick reference card                                │
+│    ├─ Emergency commands                                            │
+│    ├─ Disk usage levels                                             │
+│    ├─ Standard vs Force mode                                        │
+│    ├─ Monitoring commands                                           │
+│    ├─ Troubleshooting steps                                         │
+│    └─ Safety tips                                                   │
+│                                                                      │
+│ 📙 FLOWCHART.txt                                     [9.7 KB]       │
+│    Visual flow diagram                                              │
+│    ├─ Script logic flow                                             │
+│    ├─ Decision points                                               │
+│    ├─ What gets deleted                                             │
+│    └─ Example scenarios                                             │
+│                                                                      │
+│ 📓 SUMMARY.md                                        [9.9 KB]       │
+│    Complete feature summary                                         │
+│    ├─ Feature comparison matrix                                     │
+│    ├─ Usage scenarios                                               │
+│    ├─ Configuration guide                                           │
+│    ├─ Performance metrics                                           │
+│    ├─ Best practices                                                │
+│    └─ Version history                                               │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+
+╔══════════════════════════════════════════════════════════════════════╗
+║                        READING GUIDE                                 ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+🎯 FOR FIRST-TIME USERS:
+   1. README.md              - Understand basics
+   2. QUICK_REFERENCE.txt    - Get emergency commands
+   3. Test: clean_logs_advanced.sh --dry-run
+
+🔥 FOR FORCE MODE USERS:
+   1. FORCE_MODE.md          - Understand aggressive cleanup
+   2. QUICK_REFERENCE.txt    - Emergency procedures
+   3. Test: clean_logs_advanced.sh --force --dry-run
+
+🎓 FOR ADVANCED USERS:
+   1. SUMMARY.md             - Complete feature overview
+   2. FLOWCHART.txt          - Understand logic flow
+   3. Configure & automate
+
+🚨 IN EMERGENCY (95%+ DISK):
+   1. QUICK_REFERENCE.txt    - Immediate commands
+   2. Run: sudo ./clean_logs_advanced.sh --force
+   3. Monitor: tail -f /var/log/log_cleanup.log
+
+╔══════════════════════════════════════════════════════════════════════╗
+║                    QUICK START COMMANDS                              ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+# Make scripts executable
+chmod +x clean_logs.sh clean_logs_advanced.sh
+
+# Test without deleting anything
+sudo ./clean_logs_advanced.sh --dry-run
+
+# Standard cleanup (90-94% disk usage)
+sudo ./clean_logs_advanced.sh
+
+# Force cleanup (95-100% disk usage)
+sudo ./clean_logs_advanced.sh --force
+
+# Install to system
+sudo cp clean_logs_advanced.sh /usr/local/bin/
+sudo chmod +x /usr/local/bin/clean_logs_advanced.sh
+
+# Automate with cron (every 6 hours)
+sudo crontab -e
+# Add: 0 */6 * * * /usr/local/bin/clean_logs_advanced.sh >> /var/log/log_cleanup_cron.log 2>&1
+
+╔══════════════════════════════════════════════════════════════════════╗
+║                      FEATURE HIGHLIGHTS                              ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+✅ Two-tier cleanup system (Standard + Force)
+✅ Automatic escalation at critical levels
+✅ Safe dry-run testing mode
+✅ Detailed logging & audit trail
+✅ Color-coded output for clarity
+✅ Multiple directory support
+✅ Email notifications
+✅ Command-line customization
+✅ Systemd journal cleanup
+✅ Large file truncation
+✅ Package cache cleaning
+✅ Emergency temp file cleanup
+✅ Production-ready & tested
+
+╔══════════════════════════════════════════════════════════════════════╗
+║                    DISK USAGE THRESHOLDS                             ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+  < 90%     ✅ SAFE          No action needed
+  90-94%    ⚠️  WARNING      Standard cleanup (7-day retention)
+  95-100%   🔴 CRITICAL     FORCE MODE (3-day retention)
+  > 95%*    🚨 EMERGENCY    Manual intervention may be needed
+
+  * After force cleanup completes
+
+╔══════════════════════════════════════════════════════════════════════╗
+║                     SUPPORT & RESOURCES                              ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+📧 Email Notifications:  Edit EMAIL_NOTIFY=true in script
+🔧 Configuration:        Edit variables at top of script
+📊 Monitoring:           tail -f /var/log/log_cleanup.log
+🐛 Troubleshooting:      See README.md and FORCE_MODE.md
+📈 Performance:          See SUMMARY.md metrics section
+
+╔══════════════════════════════════════════════════════════════════════╗
+║                      VERSION INFORMATION                             ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Version:      2.0 (Force Mode Release)
+Released:     December 4, 2025
+Status:       ✅ Production Ready
+Total Lines:  1,909 lines of code & documentation
+Package Size: 74 KB
+
+New in v2.0:
+  ⭐ Force Mode for critical situations (95-100%)
+  ⭐ Automatic mode escalation
+  ⭐ Large file truncation
+  ⭐ Cache & temp file cleanup
+  ⭐ Enhanced documentation
+  ⭐ Improved command-line options
+
+╔══════════════════════════════════════════════════════════════════════╗
+║                  RECOMMENDED FILE ORDER                              ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Day 1 - Setup:
+  1. README.md              - Installation & basic usage
+  2. clean_logs_advanced.sh - Install to /usr/local/bin/
+  3. Test with --dry-run    - Verify it works
+
+Day 2 - Configuration:
+  1. SUMMARY.md             - Understand all features
+  2. Configure script       - Adjust thresholds & settings
+  3. Set up cron job        - Automate execution
+
+Day 3 - Force Mode:
+  1. FORCE_MODE.md          - Learn aggressive cleanup
+  2. Test force mode        - With --dry-run first
+  3. Print QUICK_REFERENCE  - Keep for emergencies
+
+Ongoing:
+  • Monitor logs weekly
+  • Review disk usage trends
+  • Adjust retention as needed
+  • Keep QUICK_REFERENCE.txt handy
+
+╔══════════════════════════════════════════════════════════════════════╗
+║              ALL FILES READY FOR DOWNLOAD ✅                         ║
+╚══════════════════════════════════════════════════════════════════════╝
